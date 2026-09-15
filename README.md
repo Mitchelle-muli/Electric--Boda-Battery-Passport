@@ -13,8 +13,7 @@ kofa_soh_deployment/
 ├── app.py                         # Streamlit dashboard (run this)
 ├── requirements.txt               # Python dependencies
 ├── README.md                      # This file
-├── data/
-│   └── Kore2_battery_performance.csv
+├── └── Kore2_battery_performance.csv
 ├── models/                        # Auto-created by train_model.py
 │   ├── rf_classifier.pkl
 │   ├── kmeans_model.pkl
