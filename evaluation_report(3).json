@@ -1,0 +1,63 @@
+{
+  "naive_baseline": {
+    "max_zscore": 1.53,
+    "threshold": 2.0,
+    "flagged_by_zscore": [],
+    "verdict": "no batteries flagged \u2014 outliers inflate mean/std"
+  },
+  "clustering_evaluation": {
+    "n_healthy": 8,
+    "n_faulty": 4,
+    "silhouette_score": 0.869,
+    "largest_gap_pct_per_hr": 56.5,
+    "second_largest_gap_pct_per_hr": 6.5,
+    "gap_ratio": 8.65,
+    "clean_bimodal_split": true,
+    "temp_mean_healthy": 27.2,
+    "temp_mean_faulty": 26.1,
+    "temp_ttest_p_value": 0.095,
+    "temp_confound_ruled_out": true,
+    "flagged_battery_ids": [
+      "KF-I108",
+      "KF-L111",
+      "KF-J109",
+      "KF-B101"
+    ]
+  },
+  "classifier_evaluation": {
+    "test_accuracy": 0.979,
+    "test_precision_faulty": 0.949,
+    "test_recall_faulty": 0.989,
+    "test_f1_faulty": 0.969,
+    "test_roc_auc": 0.998,
+    "confusion_matrix": [
+      [
+        1402,
+        38
+      ],
+      [
+        8,
+        712
+      ]
+    ],
+    "cv_f1_mean": 0.966,
+    "cv_f1_std": 0.004,
+    "cv_f1_per_fold": [
+      0.966,
+      0.967,
+      0.96,
+      0.972,
+      0.966
+    ],
+    "feature_importances": {
+      "speed_kph": 0.049,
+      "current_A": 0.057,
+      "ambient_temp_C": 0.132,
+      "voltage_V": 0.277,
+      "soc_percent": 0.486
+    },
+    "n_train_rows": 6480,
+    "n_test_rows": 2160,
+    "classification_report": "              precision    recall  f1-score   support\n\n     Healthy       0.99      0.97      0.98      1440\n      Faulty       0.95      0.99      0.97       720\n\n    accuracy                           0.98      2160\n   macro avg       0.97      0.98      0.98      2160\nweighted avg       0.98      0.98      0.98      2160\n"
+  }
+}
