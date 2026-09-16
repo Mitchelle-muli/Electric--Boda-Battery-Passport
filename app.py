@@ -198,26 +198,28 @@ def score_reading(speed_kph, voltage_V, current_A, soc_percent, ambient_temp_C):
 
 def send_alert(battery_id, soh, soc, faulty=True):
     try:
-        from config import TWILIO_SID, TWILIO_TOKEN, TWILIO_NUMBER, RIDER_PHONES
+        from config import TWILIO_SID, TWILIO_TOKEN, RIDER_PHONES
         from twilio.rest import Client
         client = Client(TWILIO_SID, TWILIO_TOKEN)
         phone  = RIDER_PHONES.get(battery_id, "+254797804812")
         if faulty:
-            msg = ("KOFA BATTERY ALERT\n"
-                   "Battery " + battery_id + " is FAULTY.\n"
-                   "SOH: " + str(round(soh,1)) + "% | SOC: " + str(round(soc,1)) + "%\n"
-                   "Return to nearest KOFA station immediately.\n"
-                   "Do NOT use for your next trip. - KOFA Team")
+            msg = ("KOFA BATTERY ALERT "
+                   "Battery " + battery_id + " is FAULTY. "
+                   "SOH: " + str(round(soh,1)) + "% SOC: " + str(round(soc,1)) + "% "
+                   "Return to KOFA station immediately.")
         else:
-            msg = ("KOFA BATTERY CHECK\n"
-                   "Battery " + battery_id + " is HEALTHY.\n"
-                   "SOH: " + str(round(soh,1)) + "%\n"
-                   "Safe to use for your next trip.\n"
-                   "Ride safe! - KOFA Team")
-        message = client.messages.create(body=msg, from_=TWILIO_NUMBER, to=phone)
-        return {"status":"sent","phone":phone,"sid":message.sid}
+            msg = ("KOFA BATTERY CHECK "
+                   "Battery " + battery_id + " is HEALTHY. "
+                   "SOH: " + str(round(soh,1)) + "% "
+                   "Safe for your next trip. Ride safe! KOFA Team")
+        message = client.messages.create(
+            body=msg,
+            messaging_service_sid="MGcb5b5a357b8b9f47308fe228d3b37c86",
+            to=phone
+        )
+        return {"status": "sent", "phone": phone, "sid": message.sid}
     except Exception as e:
-        return {"status":"error","message":str(e)}
+        return {"status": "error", "message": str(e)}
 
 # Load data
 df       = load_data()
