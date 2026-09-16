@@ -8,18 +8,18 @@ def send_alert(battery_id, soh, soc, faulty=True):
         client = Client(TWILIO_SID, TWILIO_TOKEN)
         phone  = RIDER_PHONES.get(battery_id, "+254797804812")
 
-        if faulty:
-            msg = ("KOFA BATTERY ALERT\n"
-                   "Battery " + battery_id + " is FAULTY.\n"
-                   "SOH: " + str(round(soh,1)) + "% | SOC: " + str(round(soc,1)) + "%\n"
-                   "Return to nearest KOFA station immediately.\n"
-                   "Do NOT use for your next trip. - KOFA Team")
-        else:
-            msg = ("KOFA BATTERY CHECK\n"
-                   "Battery " + battery_id + " is HEALTHY.\n"
-                   "SOH: " + str(round(soh,1)) + "%\n"
-                   "Safe to use for your next trip.\n"
-                   "Ride safe! - KOFA Team")
+       if faulty:
+    msg = ("Sent from your Twilio trial account - "
+           "KOFA BATTERY ALERT "
+           "Battery " + battery_id + " is FAULTY. "
+           "SOH: " + str(round(soh,1)) + "% SOC: " + str(round(soc,1)) + "% "
+           "Return to KOFA station immediately.")
+else:
+    msg = ("Sent from your Twilio trial account - "
+           "KOFA BATTERY CHECK "
+           "Battery " + battery_id + " is HEALTHY. "
+           "SOH: " + str(round(soh,1)) + "% "
+           "Safe for your next trip. Ride safe! - KOFA Team")
 
         message = client.messages.create(
             body=msg,
