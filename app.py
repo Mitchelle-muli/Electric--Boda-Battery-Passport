@@ -198,17 +198,24 @@ def score_reading(speed_kph, voltage_V, current_A, soc_percent, ambient_temp_C):
 
 def send_alert(battery_id, soh, soc, faulty=True):
     try:
-        from config import AT_USERNAME, AT_API_KEY, RIDER_PHONES
-        import africastalking
-        africastalking.initialize(AT_USERNAME, AT_API_KEY)
-        sms = africastalking.SMS
-        phone = RIDER_PHONES.get(battery_id, "+254797804812")
+        from config import TWILIO_SID, TWILIO_TOKEN, TWILIO_NUMBER, RIDER_PHONES
+        from twilio.rest import Client
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+        phone  = RIDER_PHONES.get(battery_id, "+254797804812")
         if faulty:
-            msg = "KOFA ALERT\nBattery "+battery_id+" is FAULTY.\nSOH: "+str(round(soh,1))+"% SOC: "+str(round(soc,1))+"%\nReturn to KOFA station immediately."
+            msg = ("KOFA BATTERY ALERT\n"
+                   "Battery " + battery_id + " is FAULTY.\n"
+                   "SOH: " + str(round(soh,1)) + "% | SOC: " + str(round(soc,1)) + "%\n"
+                   "Return to nearest KOFA station immediately.\n"
+                   "Do NOT use for your next trip. - KOFA Team")
         else:
-            msg = "KOFA CHECK\nBattery "+battery_id+" is HEALTHY.\nSOH: "+str(round(soh,1))+"%\nRide safe! - KOFA Team"
-        result = sms.send(msg, [phone])
-        return {"status":"sent","phone":phone,"response":result}
+            msg = ("KOFA BATTERY CHECK\n"
+                   "Battery " + battery_id + " is HEALTHY.\n"
+                   "SOH: " + str(round(soh,1)) + "%\n"
+                   "Safe to use for your next trip.\n"
+                   "Ride safe! - KOFA Team")
+        message = client.messages.create(body=msg, from_=TWILIO_NUMBER, to=phone)
+        return {"status":"sent","phone":phone,"sid":message.sid}
     except Exception as e:
         return {"status":"error","message":str(e)}
 
