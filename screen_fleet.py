@@ -19,7 +19,9 @@ import os
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 
-BASE   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# This file lives in backend/; models/ and data/ are siblings inside
+# backend/, not at the project root.
+BASE   = os.path.dirname(os.path.abspath(__file__))
 MODELS = os.path.join(BASE, "models")
 
 

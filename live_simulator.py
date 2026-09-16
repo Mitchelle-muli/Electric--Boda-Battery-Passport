@@ -6,7 +6,9 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-BASE   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# This file lives in backend/; models/ and data/ are siblings inside
+# backend/, not at the project root.
+BASE   = os.path.dirname(os.path.abspath(__file__))
 MODELS = os.path.join(BASE, "models")
 
 # Original 12 batteries

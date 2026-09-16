@@ -22,7 +22,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
 # ── Paths ────────────────────────────────────────────────────────────────────
-BASE   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# This file lives in backend/; data/ and models/ are siblings inside backend/.
+BASE   = os.path.dirname(os.path.abspath(__file__))
 DATA   = os.path.join(BASE, "data", "Kore2_battery_performance.csv")
 MODELS = os.path.join(BASE, "models")
 os.makedirs(MODELS, exist_ok=True)
