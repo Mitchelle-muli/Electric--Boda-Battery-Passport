@@ -1,45 +1,37 @@
-import sys, os, urllib3, ssl
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-urllib3.disable_warnings()
-ssl._create_default_https_context = ssl._create_unverified_context
-import africastalking
-from config import AT_USERNAME, AT_API_KEY, RIDER_PHONES
+# notify.py — Twilio SMS alerts for KOFA Battery SOH System
 
-def init_at():
-    africastalking.initialize(AT_USERNAME, AT_API_KEY)
-    return africastalking.SMS
-
-def send_faulty_alert(battery_id, drain_rate, soh, soc):
-    phone = RIDER_PHONES.get(battery_id)
-    if not phone:
-        return dict(status="error", message="No phone mapped")
-    line1 = "KOFA BATTERY ALERT"
-    line2 = "Battery " + battery_id + " is FAULTY."
-    line3 = "SOH: " + str(round(soh,1)) + "% | SOC: " + str(round(soc,1)) + "%"
-    line4 = "Return to nearest KOFA station immediately."
-    msg = line1 + "\n" + line2 + "\n" + line3 + "\n" + line4
+def send_alert(battery_id, soh, soc, faulty=True):
     try:
-        result = init_at().send(msg, [phone])
-        return dict(status="sent", phone=phone, response=result)
-    except Exception as e:
-        return dict(status="error", message=str(e))
+        from config import TWILIO_SID, TWILIO_TOKEN, TWILIO_NUMBER, RIDER_PHONES
+        from twilio.rest import Client
 
-def send_healthy_alert(battery_id, soh):
-    phone = RIDER_PHONES.get(battery_id)
-    if not phone:
-        return dict(status="error", message="No phone mapped")
-    line1 = "KOFA BATTERY CHECK"
-    line2 = "Battery " + battery_id + " is HEALTHY."
-    line3 = "SOH: " + str(round(soh,1)) + "% - Safe to use."
-    line4 = "Ride safe! - KOFA Team"
-    msg = line1 + "\n" + line2 + "\n" + line3 + "\n" + line4
-    try:
-        result = init_at().send(msg, [phone])
-        return dict(status="sent", phone=phone, response=result)
+        client = Client(TWILIO_SID, TWILIO_TOKEN)
+        phone  = RIDER_PHONES.get(battery_id, "+254797804812")
+
+        if faulty:
+            msg = ("KOFA BATTERY ALERT\n"
+                   "Battery " + battery_id + " is FAULTY.\n"
+                   "SOH: " + str(round(soh,1)) + "% | SOC: " + str(round(soc,1)) + "%\n"
+                   "Return to nearest KOFA station immediately.\n"
+                   "Do NOT use for your next trip. - KOFA Team")
+        else:
+            msg = ("KOFA BATTERY CHECK\n"
+                   "Battery " + battery_id + " is HEALTHY.\n"
+                   "SOH: " + str(round(soh,1)) + "%\n"
+                   "Safe to use for your next trip.\n"
+                   "Ride safe! - KOFA Team")
+
+        message = client.messages.create(
+            body=msg,
+            from_=TWILIO_NUMBER,
+            to=phone
+        )
+        return {"status": "sent", "phone": phone, "sid": message.sid}
     except Exception as e:
-        return dict(status="error", message=str(e))
+        return {"status": "error", "message": str(e)}
+
 
 if __name__ == "__main__":
-    print("Testing SMS ...")
-    r = send_faulty_alert("KF-B101", drain_rate=22.5, soh=67.3, soc=18.2)
+    print("Testing Twilio SMS ...")
+    r = send_alert("KF-B101", soh=67.3, soc=18.2, faulty=True)
     print(r)
